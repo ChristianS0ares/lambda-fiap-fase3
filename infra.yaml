@@ -48,4 +48,4 @@ Resources:
     Properties:
       Name: MyAPI
       Description: An API connected to Lambda and Cognito
-      FailOnWarnings: 'true'
+      FailOnWarnings: 'true' #
