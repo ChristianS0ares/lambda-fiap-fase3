@@ -1,51 +1,67 @@
+Description: Cria um cluster MongoDB Atlas usando o AWS CloudFormation
+
+Parameters:
+  AtlasProjectName:
+    Type: String
+    Default: "MongoDBAtlas"
+    Description: "Name of the MongoDB Atlas project"
+  ClusterName:
+    Type: String
+    Default: "MongoDBAtlas"
+    Description: "Name of the MongoDB Atlas cluster"
+  RegionName:
+    Type: String
+    Default: "us-east-1"
+    Description: "AWS region where the cluster will be deployed"
+  InstanceSize:
+    Type: String
+    Default: "M2"
+    Description: "Size of each MongoDB instance in the cluster"
+  NumInstances:
+    Type: Number
+    Default: 1
+    Description: "Number of instances in the cluster"
+  MongoDBVersion:
+    Type: String
+    Default: "4.4"
+    Description: "Version of MongoDB to use in the cluster"
+  Username:
+    Type: String
+    Default: "nuget"
+    Description: "Username for accessing the MongoDB cluster"
+  Password:
+    Type: String
+    Default: "12345678"
+    NoEcho: true
+    Description: "Password for accessing the MongoDB cluster"
+  ProjectID:
+    Type: String
+    Default: "nugetID"
+    Description: "ID of the MongoDB Atlas project"
+  PublicKey:
+    Type: String
+    Default: "nugetPublicKey"
+    Description: "Public API key for accessing MongoDB Atlas"
+  PrivateKey:
+    Type: String
+    NoEcho: true
+    Description: "Private API key for accessing MongoDB Atlas"
+
 Resources:
-  MyCognitoUserPool:
-    Type: AWS::Cognito::UserPool
+  AtlasCluster:
+    Type: AWS::CloudFormation::Stack
     Properties:
-      UserPoolName: MyUserPool
-
-  MyCognitoUserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      ClientName: MyAppClient
-      UserPoolId: !Ref MyCognitoUserPool
-      ExplicitAuthFlows:
-        - ALLOW_USER_PASSWORD_AUTH
-        - ALLOW_REFRESH_TOKEN_AUTH
-
-  MyLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Handler: index.handler
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: my-bucket-name
-        S3Key: my-lambda-function.zip
-      Runtime: nodejs14.x
-
-  LambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: LambdaCognitoAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - cognito-idp:*
-                Resource: !GetAtt MyCognitoUserPool.Arn
-
-  MyApiGateway:
-    Type: AWS::ApiGateway::RestApi
-    Properties:
-      Name: MyAPI
-      Description: An API connected to Lambda and Cognito
-      FailOnWarnings: 'true' #
+      TemplateURL: "https://atlas-aws-cloudformation.s3.amazonaws.com/quickstart.yml"
+      TimeoutInMinutes: 30
+      Parameters:
+        AtlasProjectName: !Ref AtlasProjectName
+        ClusterName: !Ref ClusterName
+        RegionName: !Ref RegionName
+        InstanceSize: !Ref InstanceSize
+        NumInstances: !Ref NumInstances
+        MongoDBVersion: !Ref MongoDBVersion
+        Username: !Ref Username
+        Password: !Ref Password
+        ProjectID: !Ref ProjectID
+        PublicKey: !Ref PublicKey
+        PrivateKey: !Ref PrivateKey
