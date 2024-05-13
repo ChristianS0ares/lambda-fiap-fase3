@@ -44,6 +44,7 @@ Parameters:
     Description: "Public API key for accessing MongoDB Atlas"
   PrivateKey:
     Type: String
+    Default: "nugetPrivateKey"
     NoEcho: true
     Description: "Private API key for accessing MongoDB Atlas"
 
